@@ -2,6 +2,7 @@ from flask import Flask,request
 import requests
 import json
 from blockchain import Blockchain
+from transaction import Transaction,TransactionEncoder
 app = Flask(__name__)
 
 blockchain =  Blockchain()
@@ -17,5 +18,12 @@ def get_chain():
 @app.route('/add', methods=['POST'])
 def add_transaction():
     request_data = request.get_json()
-    return request_data
+    transaction = Transaction(request_data['id'],request_data['userID'],request_data['timestamp'],request_data['data'])
+    blockchain.add_new_transaction(TransactionEncoder().encode(transaction))
+    return "True"
+
+@app.route('/mine', methods=['GET'])
+def mine():
+    blockchain.mine()
+    return "True"
 app.run(debug=True, port=5000)
